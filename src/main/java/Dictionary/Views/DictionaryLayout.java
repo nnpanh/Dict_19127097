@@ -1,3 +1,7 @@
+package Dictionary.Views;
+
+import Dictionary.DictionaryServices;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -5,14 +9,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import static java.awt.Color.blue;
 
-public class UI extends JFrame {
+public class DictionaryLayout extends JFrame {
+    DictionaryServices dataHandler;
     Color navy = new Color(0,0,128);
     Color blue = new Color(0,191,255);
     private void addComponents(){
         JButton btnSearch, btnHistory, btnChange, btnReset, btnRandom, btnGame;
-        JPanel pnSearch, pnHistory, pnChange, pnReset, pnRandom, pnGame;
+        JPanel pnSearch, pnHistory, pnGame;
         JLabel lbFooter;
 
         //Set layout
@@ -31,7 +35,7 @@ public class UI extends JFrame {
         header.setBorder(new EmptyBorder(10,10,10,10));
         btnSearch = new JButton("Search");
         btnHistory = new JButton("History");
-        btnChange = new JButton("Edit dictionary");
+        btnChange = new JButton("Add new slang");
         btnReset = new JButton("Reload");
         btnRandom = new JButton("On this day slang");
         btnGame = new JButton("Game");
@@ -50,6 +54,57 @@ public class UI extends JFrame {
             btn.setBackground(blue);
             header.add(btn);
         }
+
+        //Content
+        pnGame = new gameView();
+        pnHistory = new historyView();
+        pnSearch = new searchView(dataHandler);
+
+        Dimension size = content.getSize();
+        CardLayout cardLayout= new CardLayout(size.height,size.width);
+        content.setLayout(cardLayout);
+        content.add("search",pnSearch);
+        content.add("game",pnGame);
+        content.add("history",pnHistory);
+
+
+        //Buttons action listener
+        btnChange.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+        btnGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(content,"game");
+            }
+        });
+        btnHistory.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(content,"history");
+            }
+        });
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(content,"search");
+            }
+        });
+        btnRandom.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        btnReset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
         //Redirect card layout
         //Footer
         lbFooter = new JLabel("HCMUS-CLC-19KTPM3-Introduction to Java-19127097");
@@ -58,7 +113,8 @@ public class UI extends JFrame {
 
     }
 
-    UI(){
+    public DictionaryLayout(DictionaryServices services){
+        dataHandler = services;
         this.setTitle("Dictionary-Slang");
         ImageIcon icon = new ImageIcon("resource/img/icon.png");
         Image scaledImg = icon.getImage();
@@ -68,9 +124,5 @@ public class UI extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addComponents();
         this.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        UI ui = new UI();
     }
 }
