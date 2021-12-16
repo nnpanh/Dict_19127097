@@ -107,7 +107,7 @@ public class DictionaryLayout extends JFrame {
         ImageIcon icon = new ImageIcon("resource/img/icon.png");
         Image scaledImg = icon.getImage();
         this.setIconImage(scaledImg);
-        this.setSize(new Dimension(600,800));
+        this.setSize(new Dimension(700,800));
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addComponents();

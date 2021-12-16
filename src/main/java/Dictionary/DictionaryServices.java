@@ -1,19 +1,20 @@
 package Dictionary;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 
 public class DictionaryServices {
     HashMap<String, String> dictionary;
     HashMap<String, String> currentDictionary;
     ArrayList<String> history;
+    final String source = "resource/slang.txt";
+    final String dest = "resource/data.txt";
+
     DictionaryServices(){
         dictionary = new HashMap<>();
-        loadData("resource/data.txt");
+        loadData(dest);
         currentDictionary=dictionary;
         history = new ArrayList<>();
         history.add("Start");
@@ -47,8 +48,23 @@ public class DictionaryServices {
     }
     public void reloadData(){
         dictionary.clear();
-        loadData("resource/slang.txt");
+        loadData(source);
         currentDictionary=dictionary;
+        try {
+            InputStream input = new FileInputStream(source);
+            OutputStream output = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = input.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+            System.out.println("Overwritten data.txt");
+            input.close();
+            output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
     public ArrayList<String> getKeys(){
         return new ArrayList<>(dictionary.keySet());
@@ -65,8 +81,7 @@ public class DictionaryServices {
         currentDictionary.forEach((String k, String v)->{
             if(v.contains(key)) searchResult.put(k,v);
         });
-        currentDictionary=searchResult;
-        return new ArrayList<>(currentDictionary.keySet());
+        return new ArrayList<>(searchResult.keySet());
         }
 
 }
