@@ -124,5 +124,6 @@ public class DictionaryLayout extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addComponents();
         this.setVisible(true);
+        System.out.println("Loading UI complete");
     }
 }

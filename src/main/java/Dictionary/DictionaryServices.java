@@ -8,10 +8,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class DictionaryServices {
-    Hashtable<String, String> dictionary;
+    HashMap<String, String> dictionary;
+    HashMap<String, String> currentDictionary;
     DictionaryServices(){
-        dictionary = new Hashtable<>();
+        dictionary = new HashMap<>();
         loadData("resource/data.txt");
+        currentDictionary=dictionary;
     }
 
     public void loadData(String path){
@@ -30,10 +32,25 @@ public class DictionaryServices {
         IOException e) {
             e.printStackTrace();
         }
+        System.out.println("Loading data complete");
+    }
+    public ArrayList<String> getKeys(){
+        return new ArrayList<>(dictionary.keySet());
+    }
+    public String searchBySlang(String key){
+        return dictionary.get(key);
+    }
+    public ArrayList<String> refresh(){
+        currentDictionary=dictionary;
+        return getKeys();
+    }
+    public ArrayList<String>  searchByKeyword(String key){
+        HashMap<String, String> searchResult = new HashMap<>();
+        currentDictionary.forEach((String k, String v)->{
+            if(v.contains(key)) searchResult.put(k,v);
+        });
+        currentDictionary=searchResult;
+        return new ArrayList<>(currentDictionary.keySet());
+        }
 
-    }
-    public List<String> getKeys(){
-        List<String> data = new ArrayList<>(dictionary.keySet());
-        return data;
-    }
 }
