@@ -10,10 +10,21 @@ import java.util.*;
 public class DictionaryServices {
     HashMap<String, String> dictionary;
     HashMap<String, String> currentDictionary;
+    ArrayList<String> history;
     DictionaryServices(){
         dictionary = new HashMap<>();
         loadData("resource/data.txt");
         currentDictionary=dictionary;
+        history = new ArrayList<>();
+        history.add("Start");
+    }
+
+    public ArrayList<String> getHistory() {
+        return history;
+    }
+
+    public void addHistory(String newLine) {
+        history.add(newLine);
     }
 
     public void loadData(String path){
@@ -33,6 +44,11 @@ public class DictionaryServices {
             e.printStackTrace();
         }
         System.out.println("Loading data complete");
+    }
+    public void reloadData(){
+        dictionary.clear();
+        loadData("resource/slang.txt");
+        currentDictionary=dictionary;
     }
     public ArrayList<String> getKeys(){
         return new ArrayList<>(dictionary.keySet());

@@ -14,21 +14,26 @@ import java.util.Objects;
 
 public class searchView extends JPanel {
     DictionaryServices dataHandler;
+    JPanel pnSearchBox, pnSlang, pnDefinition;
+    JRadioButton rbSlang, rbKeyword;
+    JButton btnSearch;
+    JLabel lbEnter, lbDefinition;
+    JTextField tfInput;
+    JList<Object> list;
+    JScrollPane scrollPane;
+
     searchView(DictionaryServices services){
         dataHandler=services;
         this.setBackground(Color.white);
         this.setLayout(new BorderLayout());
         addComponents();
     }
+    public void refresh(){
+        list.setListData(dataHandler.getKeys().toArray());
+        list.clearSelection();
+        tfInput.setText(null);
+    }
     private void addComponents(){
-        JPanel pnSearchBox, pnSlang, pnDefinition;
-        JRadioButton rbSlang, rbKeyword;
-        JButton btnSearch;
-        JLabel lbEnter, lbDefinition;
-        JTextField tfInput;
-        JList<Object> list;
-        JScrollPane scrollPane;
-
         //Divide sections
         pnSearchBox = new JPanel();
         this.add(pnSearchBox,BorderLayout.NORTH);
@@ -79,27 +84,44 @@ public class searchView extends JPanel {
         //Add actionListener
         list.addListSelectionListener(e -> {
             if (!list.isSelectionEmpty()) {
+                //Get key ->search in current dictionary
                 String searchKey = list.getSelectedValue().toString();
-                String searchResult = dataHandler.searchBySlang(searchKey).replace("|"," or");
+                String searchResult = dataHandler.searchBySlang(searchKey).replace("|"," OR");
                 lbDefinition.setText(searchResult);
+                dataHandler.addHistory("User clicked on the slang word '"+searchKey+"'");
             }
     });
 
         btnSearch.addActionListener(e -> {
+            //Unselect on list
+            list.clearSelection();
+
+            //Get key and mode in radio button
             String searchMode = buttonGroup.getSelection().getActionCommand();
             String searchKey = tfInput.getText();
+
+            //If search key = null, refresh data list
             if (searchKey.equals("")) {
                 list.setListData(dataHandler.refresh().toArray());
+                lbDefinition.setText("Refresh");
+                dataHandler.addHistory("User reset search result");
             }
+
+            //If mode=Slang, search one word
             if (searchMode.equals("Slang")) {
+                dataHandler.addHistory("User entered '"+searchKey+"' to search one slang word");
                 String searchResult = dataHandler.searchBySlang(searchKey);
-                if (!searchResult.isBlank()) searchResult.replace("|"," or");
+                if (searchResult!=null) searchResult.replace("|"," OR");
                 lbDefinition.setText(Objects.requireNonNullElse(searchResult, "Slang not found"));
             }
+            //Else, return new list of data
             else
             {
+                dataHandler.addHistory("User entered '"+searchKey+"' to search by keyword");
                 ArrayList<String> searchResults = dataHandler.searchByKeyword(searchKey);
                 list.setListData(searchResults.toArray());
+                if (searchResults.size()==0) lbDefinition.setText("No slang contains '"+searchKey+"'");
+                else lbDefinition.setText("List of slang contains keyword '"+searchKey+"'");
             }
 
         });

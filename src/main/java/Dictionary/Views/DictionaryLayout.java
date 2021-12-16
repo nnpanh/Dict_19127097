@@ -57,8 +57,8 @@ public class DictionaryLayout extends JFrame {
 
         //Content
         pnGame = new gameView();
-        pnHistory = new historyView();
         pnSearch = new searchView(dataHandler);
+        pnHistory = new historyView(dataHandler);
 
         Dimension size = content.getSize();
         CardLayout cardLayout= new CardLayout(size.height,size.width);
@@ -74,35 +74,23 @@ public class DictionaryLayout extends JFrame {
             public void actionPerformed(ActionEvent e) {
             }
         });
-        btnGame.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(content,"game");
-            }
+        btnGame.addActionListener(e -> cardLayout.show(content,"game"));
+        btnHistory.addActionListener(e -> {
+            ((historyView) pnHistory).refresh();
+            cardLayout.show(content,"history");
         });
-        btnHistory.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(content,"history");
-            }
-        });
-        btnSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(content,"search");
-            }
-        });
+        btnSearch.addActionListener(e -> cardLayout.show(content,"search"));
         btnRandom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
             }
         });
-        btnReset.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
+        btnReset.addActionListener(e -> {
+        dataHandler.reloadData();
+        ((searchView) pnSearch).refresh();
+        cardLayout.show(content,"search");
+        JOptionPane.showMessageDialog(getContentPane(),"Data reloaded");
         });
 
         //Redirect card layout
@@ -119,7 +107,7 @@ public class DictionaryLayout extends JFrame {
         ImageIcon icon = new ImageIcon("resource/img/icon.png");
         Image scaledImg = icon.getImage();
         this.setIconImage(scaledImg);
-        this.setSize(new Dimension(800,800));
+        this.setSize(new Dimension(600,800));
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addComponents();
