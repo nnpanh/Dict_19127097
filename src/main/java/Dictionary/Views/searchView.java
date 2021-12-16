@@ -8,24 +8,25 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class searchView extends JPanel {
     DictionaryServices dataHandler;
     JList<Object> list;
     JTextField tfInput;
 
-    searchView(DictionaryServices services){
-        dataHandler=services;
+    searchView(DictionaryServices services) {
+        dataHandler = services;
         this.setBackground(Color.white);
         this.setLayout(new BorderLayout());
         addComponents();
     }
-    public void refresh(){
+
+    public void refresh() {
         list.setListData(dataHandler.getKeys().toArray());
         list.clearSelection();
         tfInput.setText(null);
     }
+
     private void addComponents() {
         JPanel pnSearchBox, pnSlang, pnDefinition, pnTop, pnHolder, pnButton, pnHide, pnCard;
         JRadioButton rbSlang, rbKeyword;
@@ -64,7 +65,7 @@ public class searchView extends JPanel {
         pnSearchBox.add(lbEnter);
         pnSearchBox.add(tfInput);
         pnSearchBox.add(btnSearch);
-        pnSearchBox.setBorder(new EmptyBorder(10,10,10,10));
+        pnSearchBox.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         //Add content panel
         lbDefinition = new JLabel("Pick a slang");
@@ -85,7 +86,7 @@ public class searchView extends JPanel {
         pnHolder.setBackground(Color.white);
         pnHide.setBackground(Color.white);
 
-        pnButton.setLayout(new BoxLayout(pnButton,BoxLayout.LINE_AXIS));
+        pnButton.setLayout(new BoxLayout(pnButton, BoxLayout.LINE_AXIS));
         pnButton.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         pnButton.add(Box.createHorizontalGlue());
         pnButton.add(btnEdit);
@@ -94,15 +95,15 @@ public class searchView extends JPanel {
         pnHolder.add(pnButton);
 
         Dimension size = pnHolder.getSize();
-        CardLayout cardLayout= new CardLayout(size.height,size.width);
+        CardLayout cardLayout = new CardLayout(size.height, size.width);
         pnCard.setLayout(cardLayout);
-        pnCard.add("hide",pnHide);
-        pnCard.add("show",pnHolder);
+        pnCard.add("hide", pnHide);
+        pnCard.add("show", pnHolder);
 
 
         pnDefinition.setBackground(Color.white);
-        pnDefinition.add(pnTop,BorderLayout.NORTH);
-        pnDefinition.add(pnCard,BorderLayout.SOUTH);
+        pnDefinition.add(pnTop, BorderLayout.NORTH);
+        pnDefinition.add(pnCard, BorderLayout.SOUTH);
 
         //Add JList
         list = new JList<>(dataHandler.getKeys().toArray());
@@ -117,12 +118,12 @@ public class searchView extends JPanel {
             if (!list.isSelectionEmpty()) {
                 //Get key ->search in  dictionary
                 String searchKey = list.getSelectedValue().toString();
-                String searchResult = dataHandler.searchBySlang(searchKey).replace("|"," OR");
+                String searchResult = dataHandler.searchBySlang(searchKey).replace("|", " OR");
                 lbDefinition.setText(searchResult);
-                cardLayout.show(pnCard,"show");
-                dataHandler.addHistory("User clicked on the slang word '"+searchKey+"'");
+                cardLayout.show(pnCard, "show");
+                dataHandler.addHistory("User clicked on the slang word '" + searchKey + "'");
             }
-    });
+        });
 
         btnSearch.addActionListener(e -> {
             //Unselect on list
@@ -137,7 +138,7 @@ public class searchView extends JPanel {
                 list.setListData(dataHandler.refresh().toArray());
                 //Update UI
                 lbDefinition.setText("Refresh");
-                cardLayout.show(pnCard,"hide");
+                cardLayout.show(pnCard, "hide");
                 //Add to history
                 dataHandler.addHistory("User reset search result");
             } else {
@@ -148,11 +149,10 @@ public class searchView extends JPanel {
                         searchResult.replace("|", " OR");
                         //Update UI
                         lbDefinition.setText(searchResult);
-                        cardLayout.show(pnCard,"show");
-                    }
-                    else{ //Update UI
+                        cardLayout.show(pnCard, "show");
+                    } else { //Update UI
                         lbDefinition.setText("Slang not found");
-                        cardLayout.show(pnCard,"hide");
+                        cardLayout.show(pnCard, "hide");
                     }
                     //Add to history
                     dataHandler.addHistory("User entered '" + searchKey + "' to search one slang word");
@@ -165,7 +165,7 @@ public class searchView extends JPanel {
                     if (searchResults.size() == 0) lbDefinition.setText("No slang contains '" + searchKey + "'");
                     else lbDefinition.setText("List of slang contains keyword '" + searchKey + "'");
                     //Update UI
-                    cardLayout.show(pnCard,"hide");
+                    cardLayout.show(pnCard, "hide");
                     //Add to history
                     dataHandler.addHistory("User entered '" + searchKey + "' to search by keyword");
                 }
@@ -174,7 +174,7 @@ public class searchView extends JPanel {
         btnEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(pnCard,"hide");
+                cardLayout.show(pnCard, "hide");
             }
         });
     }

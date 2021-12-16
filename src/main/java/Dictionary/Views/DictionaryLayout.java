@@ -12,9 +12,24 @@ import java.util.ArrayList;
 
 public class DictionaryLayout extends JFrame {
     DictionaryServices dataHandler;
-    Color navy = new Color(0,0,128);
-    Color blue = new Color(0,191,255);
-    private void addComponents(){
+    Color navy = new Color(0, 0, 128);
+    Color blue = new Color(0, 191, 255);
+
+    public DictionaryLayout(DictionaryServices services) {
+        dataHandler = services;
+        this.setTitle("Dictionary-Slang");
+        ImageIcon icon = new ImageIcon("resource/img/icon.png");
+        Image scaledImg = icon.getImage();
+        this.setIconImage(scaledImg);
+        this.setSize(new Dimension(700, 800));
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addComponents();
+        this.setVisible(true);
+        System.out.println("Loading UI complete");
+    }
+
+    private void addComponents() {
         JButton btnSearch, btnHistory, btnChange, btnReset, btnRandom, btnGame;
         JPanel pnSearch, pnHistory, pnGame;
         JLabel lbFooter;
@@ -23,16 +38,16 @@ public class DictionaryLayout extends JFrame {
         this.setLayout(new BorderLayout());
         //Divide sections
         JPanel header = new JPanel();
-        this.add(header,BorderLayout.NORTH);
+        this.add(header, BorderLayout.NORTH);
         JPanel content = new JPanel();
-        this.add(content,BorderLayout.CENTER);
+        this.add(content, BorderLayout.CENTER);
         JPanel footer = new JPanel();
         this.add(footer, BorderLayout.SOUTH);
 
         //Header
         header.setBackground(navy);
         header.setLayout(new FlowLayout());
-        header.setBorder(new EmptyBorder(10,10,10,10));
+        header.setBorder(new EmptyBorder(10, 10, 10, 10));
         btnSearch = new JButton("Search");
         btnHistory = new JButton("History");
         btnChange = new JButton("Add new slang");
@@ -48,7 +63,7 @@ public class DictionaryLayout extends JFrame {
         buttons.add(btnRandom);
         buttons.add(btnGame);
         //Design button
-        for (JButton btn:buttons) {
+        for (JButton btn : buttons) {
             btn.setFocusPainted(false);
             btn.setForeground(Color.white);
             btn.setBackground(blue);
@@ -61,11 +76,11 @@ public class DictionaryLayout extends JFrame {
         pnHistory = new historyView(dataHandler);
 
         Dimension size = content.getSize();
-        CardLayout cardLayout= new CardLayout(size.height,size.width);
+        CardLayout cardLayout = new CardLayout(size.height, size.width);
         content.setLayout(cardLayout);
-        content.add("search",pnSearch);
-        content.add("game",pnGame);
-        content.add("history",pnHistory);
+        content.add("search", pnSearch);
+        content.add("game", pnGame);
+        content.add("history", pnHistory);
 
 
         //Buttons action listener
@@ -74,12 +89,12 @@ public class DictionaryLayout extends JFrame {
             public void actionPerformed(ActionEvent e) {
             }
         });
-        btnGame.addActionListener(e -> cardLayout.show(content,"game"));
+        btnGame.addActionListener(e -> cardLayout.show(content, "game"));
         btnHistory.addActionListener(e -> {
             ((historyView) pnHistory).refresh();
-            cardLayout.show(content,"history");
+            cardLayout.show(content, "history");
         });
-        btnSearch.addActionListener(e -> cardLayout.show(content,"search"));
+        btnSearch.addActionListener(e -> cardLayout.show(content, "search"));
         btnRandom.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -87,10 +102,10 @@ public class DictionaryLayout extends JFrame {
             }
         });
         btnReset.addActionListener(e -> {
-        dataHandler.reloadData();
-        ((searchView) pnSearch).refresh();
-        cardLayout.show(content,"search");
-        JOptionPane.showMessageDialog(getContentPane(),"Data reloaded");
+            dataHandler.reloadData();
+            ((searchView) pnSearch).refresh();
+            cardLayout.show(content, "search");
+            JOptionPane.showMessageDialog(getContentPane(), "Data reloaded");
         });
 
         //Redirect card layout
@@ -99,19 +114,5 @@ public class DictionaryLayout extends JFrame {
         lbFooter.setFont(lbFooter.getFont().deriveFont(Font.ITALIC));
         footer.add(lbFooter);
 
-    }
-
-    public DictionaryLayout(DictionaryServices services){
-        dataHandler = services;
-        this.setTitle("Dictionary-Slang");
-        ImageIcon icon = new ImageIcon("resource/img/icon.png");
-        Image scaledImg = icon.getImage();
-        this.setIconImage(scaledImg);
-        this.setSize(new Dimension(700,800));
-        this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        addComponents();
-        this.setVisible(true);
-        System.out.println("Loading UI complete");
     }
 }

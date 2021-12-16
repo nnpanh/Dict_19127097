@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class gameView extends JPanel {
-    gameView(){
+    gameView() {
         this.setBackground(Color.cyan);
     }
 }

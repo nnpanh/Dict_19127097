@@ -2,20 +2,21 @@ package Dictionary;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 public class DictionaryServices {
+    final String source = "resource/slang.txt";
+    final String dest = "resource/data.txt";
     HashMap<String, String> dictionary;
     HashMap<String, String> currentDictionary;
     ArrayList<String> history;
-    final String source = "resource/slang.txt";
-    final String dest = "resource/data.txt";
 
-    DictionaryServices(){
+    DictionaryServices() {
         dictionary = new HashMap<>();
         loadData(dest);
-        currentDictionary=dictionary;
+        currentDictionary = dictionary;
         history = new ArrayList<>();
         history.add("Start");
     }
@@ -28,28 +29,29 @@ public class DictionaryServices {
         history.add(newLine);
     }
 
-    public void loadData(String path){
+    public void loadData(String path) {
         try {
             InputStreamReader fileInputStream = new InputStreamReader(new FileInputStream(path), StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(fileInputStream);
 
             String line;
-            while ((line = bufferedReader.readLine())!=null){
-                StringTokenizer tokenizer = new StringTokenizer(line,"`");
-                if (tokenizer.countTokens()==2) {
+            while ((line = bufferedReader.readLine()) != null) {
+                StringTokenizer tokenizer = new StringTokenizer(line, "`");
+                if (tokenizer.countTokens() == 2) {
                     dictionary.put(tokenizer.nextToken(), tokenizer.nextToken());
                 }
             }
         } catch (
-        IOException e) {
+                IOException e) {
             e.printStackTrace();
         }
         System.out.println("Loading data complete");
     }
-    public void reloadData(){
+
+    public void reloadData() {
         dictionary.clear();
         loadData(source);
-        currentDictionary=dictionary;
+        currentDictionary = dictionary;
         try {
             InputStream input = new FileInputStream(source);
             OutputStream output = new FileOutputStream(dest);
@@ -66,22 +68,26 @@ public class DictionaryServices {
         }
 
     }
-    public ArrayList<String> getKeys(){
+
+    public ArrayList<String> getKeys() {
         return new ArrayList<>(dictionary.keySet());
     }
-    public String searchBySlang(String key){
+
+    public String searchBySlang(String key) {
         return dictionary.get(key);
     }
-    public ArrayList<String> refresh(){
-        currentDictionary=dictionary;
+
+    public ArrayList<String> refresh() {
+        currentDictionary = dictionary;
         return getKeys();
     }
-    public ArrayList<String>  searchByKeyword(String key){
+
+    public ArrayList<String> searchByKeyword(String key) {
         HashMap<String, String> searchResult = new HashMap<>();
-        currentDictionary.forEach((String k, String v)->{
-            if(v.contains(key)) searchResult.put(k,v);
+        currentDictionary.forEach((String k, String v) -> {
+            if (v.contains(key)) searchResult.put(k, v);
         });
         return new ArrayList<>(searchResult.keySet());
-        }
+    }
 
 }
