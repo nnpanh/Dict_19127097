@@ -90,4 +90,7 @@ public class DictionaryServices {
         return new ArrayList<>(searchResult.keySet());
     }
 
+    public void editSlang(String currentSlang, String newSlang) {
+        currentDictionary.put(currentSlang,newSlang);
+    }
 }
