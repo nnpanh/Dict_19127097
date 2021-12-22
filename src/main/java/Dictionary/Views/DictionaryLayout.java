@@ -23,7 +23,7 @@ public class DictionaryLayout extends JFrame {
         this.setIconImage(scaledImg);
         this.setSize(new Dimension(700, 800));
         this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addComponents();
         this.setVisible(true);
         System.out.println("Loading UI complete");
@@ -71,7 +71,7 @@ public class DictionaryLayout extends JFrame {
         }
 
         //Content
-        pnGame = new gameView();
+        pnGame = new gameView(dataHandler);
         pnSearch = new searchView(dataHandler);
         pnHistory = new historyView(dataHandler);
 
@@ -87,6 +87,27 @@ public class DictionaryLayout extends JFrame {
         btnChange.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JTextField slang = new JTextField("Slang", 20);
+                JTextField meaning = new JTextField("Meaning", 20);
+                JPanel option = new JPanel(new GridLayout(4, 1));
+                option.setPreferredSize(new Dimension(100, 100));
+                option.add(new JLabel("Slang: "));
+                option.add(slang);
+                option.add(new JLabel("Meaning: "));
+                option.add(meaning);
+                int confirm = JOptionPane.showConfirmDialog(getContentPane(), option, "Enter new slang word:", JOptionPane.OK_CANCEL_OPTION);
+                if (confirm == JOptionPane.OK_OPTION) {
+                    if (dataHandler.checkSlang(slang.getText()) == 0) {
+                        dataHandler.addSlang(slang.getText(), meaning.getText());
+                        JOptionPane.showMessageDialog(getContentPane(), "New slang added");
+                    } else {
+                        String[] buttons = {"Overwrite", "Duplicate"};
+                        int pick = JOptionPane.showOptionDialog(getContentPane(), "Slang already existed.", "Click a button",
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, buttons, buttons[0]);
+                        if (pick == 0) dataHandler.overwriteSlang(slang.getText(), meaning.getText());
+                        else dataHandler.duplicateSlang(slang.getText(), meaning.getText());
+                    }
+                }
             }
         });
         btnGame.addActionListener(e -> cardLayout.show(content, "game"));
@@ -95,11 +116,10 @@ public class DictionaryLayout extends JFrame {
             cardLayout.show(content, "history");
         });
         btnSearch.addActionListener(e -> cardLayout.show(content, "search"));
-        btnRandom.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
+        btnRandom.addActionListener(e -> {
+            String[] random = dataHandler.randomWord();
+            JOptionPane.showMessageDialog(getContentPane(),"Today random slang word: "+ random[0]
+            +" - "+random[1],random[2],JOptionPane.INFORMATION_MESSAGE);
         });
         btnReset.addActionListener(e -> {
             dataHandler.reloadData();

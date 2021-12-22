@@ -151,7 +151,7 @@ public class searchView extends JPanel {
                 if (searchMode.equals("Slang")) {
                     String searchResult = dataHandler.searchBySlang(searchKey);
                     if (searchResult != null) {
-                        searchResult.replace("|", " OR");
+                        searchResult=searchResult.replace("|", " OR");
                         //Update UI
                         currentSlang=searchKey;
                         currentResult=searchResult;
@@ -178,13 +178,16 @@ public class searchView extends JPanel {
                 }
             }
         });
-        btnEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String newSlang = JOptionPane.showInputDialog(null, "Enter new meaning of '"+currentSlang
-                        +"' slang", currentResult,JOptionPane.INFORMATION_MESSAGE);
-                dataHandler.editSlang(currentSlang,newSlang);
-
+        btnEdit.addActionListener(e -> {
+            String newSlang = JOptionPane.showInputDialog(null, "Enter new meaning of '"+currentSlang
+                    +"' slang", currentResult,JOptionPane.INFORMATION_MESSAGE);
+            dataHandler.editSlang(currentSlang,newSlang);
+            refresh();
+        });
+        btnDelete.addActionListener(e->{
+            int option = JOptionPane.showConfirmDialog(null,"Do you want to delete this slang?","Confirm",JOptionPane.OK_CANCEL_OPTION);
+            if (option==JOptionPane.OK_OPTION) {
+                dataHandler.deleteSlang(currentSlang);
             }
         });
     }

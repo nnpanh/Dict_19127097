@@ -1,14 +1,21 @@
 package Dictionary;
 
+import javax.swing.text.DateFormatter;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DictionaryServices {
     final String source = "resource/slang.txt";
     final String dest = "resource/data.txt";
+    final String _history="resource/history.txt";
+    final String _date="resource/date.txt";
     HashMap<String, String> dictionary;
     HashMap<String, String> currentDictionary;
     ArrayList<String> history;
@@ -18,7 +25,7 @@ public class DictionaryServices {
         loadData(dest);
         currentDictionary = dictionary;
         history = new ArrayList<>();
-        history.add("Start");
+        loadHistory(_history);
     }
 
     public ArrayList<String> getHistory() {
@@ -31,8 +38,9 @@ public class DictionaryServices {
 
     public void loadData(String path) {
         try {
-            InputStreamReader fileInputStream = new InputStreamReader(new FileInputStream(path), StandardCharsets.UTF_8);
-            BufferedReader bufferedReader = new BufferedReader(fileInputStream);
+            FileInputStream fileInputStream = new FileInputStream(path);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -41,6 +49,7 @@ public class DictionaryServices {
                     dictionary.put(tokenizer.nextToken(), tokenizer.nextToken());
                 }
             }
+            bufferedReader.close();
         } catch (
                 IOException e) {
             e.printStackTrace();
@@ -48,6 +57,38 @@ public class DictionaryServices {
         System.out.println("Loading data complete");
     }
 
+    public void loadHistory(String path){
+        try {
+            FileInputStream fileInputStream = new FileInputStream(path);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                history.add(line);
+            }
+            bufferedReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        while (history.size()>1000)
+          history.remove(0);
+    }
+    public void saveHistory(String path){
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(path);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+            for (String line: history
+                 ) {
+                bufferedWriter.write(line);
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.close();
+        }catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
     public void reloadData() {
         dictionary.clear();
         loadData(source);
@@ -68,7 +109,26 @@ public class DictionaryServices {
         }
 
     }
+    public void saveDictionary(String path){
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(path);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+            currentDictionary.forEach((String k, String v) -> {
+                try {
+                    bufferedWriter.write(k+"`"+v);
+                    bufferedWriter.newLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            bufferedWriter.close();
+        }catch (IOException e)
+        {
+            e.printStackTrace();
+        }
 
+    }
     public ArrayList<String> getKeys() {
         return new ArrayList<>(dictionary.keySet());
     }
@@ -91,6 +151,81 @@ public class DictionaryServices {
     }
 
     public void editSlang(String currentSlang, String newSlang) {
-        currentDictionary.put(currentSlang,newSlang);
+        currentDictionary.replace(currentSlang,newSlang);
     }
+    public int checkSlang(String slang){
+        //0 = NEW, 1 = EXISTS
+        for (Map.Entry<String, String> entry : currentDictionary.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            if (k.equals(slang)) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+    public void addSlang(String slang, String meaning){
+        currentDictionary.put(slang,meaning);
+    }
+    public void overwriteSlang(String slang, String meaning){
+        currentDictionary.replace(slang,meaning);
+    }
+    public void duplicateSlang(String slang, String meaning){
+        String old = currentDictionary.get(slang);
+        currentDictionary.replace(slang,old+"| "+meaning);
+    }
+    public void deleteSlang(String slang){
+        currentDictionary.remove(slang);
+    }
+    public String[] randomWord(){
+        String[] random ={"slang","meaning","date"};
+
+        String pattern ="yyyy-MM-dd";
+
+        //Read from date.txt
+        try {
+            FileInputStream fileInputStream = new FileInputStream(_date);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line = bufferedReader.readLine();
+            String slang = bufferedReader.readLine();
+            String meaning;
+            bufferedReader.close();
+
+            //Compare date in date.txt
+            LocalDate today = LocalDate.now();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+            LocalDate fileDate = LocalDate.parse(line, formatter);
+
+            if (today.equals(fileDate)) {
+                meaning=searchBySlang(slang);
+            }
+            else{
+                Object[] keys = currentDictionary.keySet().toArray();
+                Random rand = new Random();
+                slang = keys[rand.nextInt(keys.length)].toString();
+                meaning=searchBySlang(slang);
+                //Write new slang to date.txt
+                FileOutputStream fileOutputStream = new FileOutputStream(_date);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+                BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+
+                bufferedWriter.write(today.toString());
+                bufferedWriter.newLine();
+                bufferedWriter.write(slang);
+
+                bufferedWriter.close();
+            }
+            random[0]=slang;
+            random[1]=meaning;
+            random[2]=today.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return random;
+    }
+
 }
