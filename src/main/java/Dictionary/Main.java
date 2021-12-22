@@ -13,6 +13,8 @@ public class Main {
 
         DictionaryServices services = new DictionaryServices();
         DictionaryLayout form = new DictionaryLayout(services);
+
+        //Save data on exit
         form.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {

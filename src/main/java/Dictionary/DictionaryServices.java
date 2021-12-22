@@ -223,8 +223,6 @@ public class DictionaryServices {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         return random;
     }
 
