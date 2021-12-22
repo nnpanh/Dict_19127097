@@ -153,23 +153,26 @@ public class DictionaryServices {
     public void editSlang(String currentSlang, String newSlang) {
         currentDictionary.replace(currentSlang,newSlang);
     }
+
     public int checkSlang(String slang){
         //0 = NEW, 1 = EXISTS
         for (Map.Entry<String, String> entry : currentDictionary.entrySet()) {
             String k = entry.getKey();
-            String v = entry.getValue();
             if (k.equals(slang)) {
                 return 1;
             }
         }
         return 0;
     }
+
     public void addSlang(String slang, String meaning){
         currentDictionary.put(slang,meaning);
     }
+
     public void overwriteSlang(String slang, String meaning){
         currentDictionary.replace(slang,meaning);
     }
+
     public void duplicateSlang(String slang, String meaning){
         String old = currentDictionary.get(slang);
         currentDictionary.replace(slang,old+"| "+meaning);
@@ -177,6 +180,7 @@ public class DictionaryServices {
     public void deleteSlang(String slang){
         currentDictionary.remove(slang);
     }
+
     public String[] randomWord(){
         String[] random ={"slang","meaning","date"};
 
@@ -224,6 +228,40 @@ public class DictionaryServices {
             e.printStackTrace();
         }
         return random;
+    }
+    public String[] loadQuestion(int mode){
+        //MODE 1: SLANG - FIND MEANING, 2: MEANING - FIND SLANG
+        String[] question={"","","","",""};
+        Object[] keys,values;
+        //Generate
+        keys = currentDictionary.keySet().toArray();
+        values = currentDictionary.values().toArray();
+        //Get the question
+        int size = dictionary.size();
+        ArrayList<Integer> random = new ArrayList<>();
+        //Random
+        for (int i=0;i<size;i++) {
+            random.add(i);
+        }
+        Collections.shuffle(random);
+        //Answer
+        if (mode ==1) {
+            question[0] = keys[random.get(0)].toString();
+            question[1]= values[random.get(0)].toString();
+            question[2]= values[random.get(1)].toString();
+            question[3]= values[random.get(2)].toString();
+            question[4]= values[random.get(3)].toString();
+            question[0]="What is the meaning of '"+question[0]+"'?";
+              }
+        else {
+            question[0] = values[random.get(0)].toString();
+            question[1]= keys[random.get(0)].toString();
+            question[2]= keys[random.get(1)].toString();
+            question[3]= keys[random.get(2)].toString();
+            question[4]= keys[random.get(3)].toString();
+            question[0]="What is the definition of '"+question[0]+"'?";
+        }
+        return question;
     }
 
 }

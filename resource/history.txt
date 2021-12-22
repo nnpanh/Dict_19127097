@@ -186,3 +186,9 @@ User entered 'Hebi' to search one slang word
 User entered 'Hebi' to search one slang word
 User entered 'Hebi' to search one slang word
 User entered 'Hebi' to search one slang word
+User entered 'f' to search one slang word
+User entered 'f' to search by keyword
+User clicked on the slang word '10-1'
+User clicked on the slang word '10-1'
+User clicked on the slang word 'POPO'
+User clicked on the slang word 'POPO'

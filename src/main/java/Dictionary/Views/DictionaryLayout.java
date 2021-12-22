@@ -21,7 +21,7 @@ public class DictionaryLayout extends JFrame {
         ImageIcon icon = new ImageIcon("resource/img/icon.png");
         Image scaledImg = icon.getImage();
         this.setIconImage(scaledImg);
-        this.setSize(new Dimension(700, 800));
+        this.setSize(new Dimension(700, 500));
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addComponents();
@@ -110,7 +110,10 @@ public class DictionaryLayout extends JFrame {
                 }
             }
         });
-        btnGame.addActionListener(e -> cardLayout.show(content, "game"));
+        btnGame.addActionListener(e -> {
+            cardLayout.show(content, "game");
+
+        });
         btnHistory.addActionListener(e -> {
             ((historyView) pnHistory).refresh();
             cardLayout.show(content, "history");
