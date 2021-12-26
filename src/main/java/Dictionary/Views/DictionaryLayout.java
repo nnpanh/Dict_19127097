@@ -111,7 +111,9 @@ public class DictionaryLayout extends JFrame {
             }
         });
         btnGame.addActionListener(e -> {
+            ((gameView) pnGame).refresh();
             cardLayout.show(content, "game");
+
 
         });
         btnHistory.addActionListener(e -> {
