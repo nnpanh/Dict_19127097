@@ -1,4 +1,4 @@
-# Dictionary.Main-Slang
+# Dictionary
 Từ điển với các tính năng:
 1. Chức năng tìm kiếm theo slang word. 
 2. Chức năng tìm kiếm theo definition, hiển thị ra tất cả các slang words mà trong 
